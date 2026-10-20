@@ -1,6 +1,6 @@
 # 🇪🇺 Analyse et Simulation de la UEFA Champions League 2026/2027
 
-### 👨‍💻 Développé par : **Moussa H. (@hmaroum-dotcom)**
+### 👨‍💻 Développé par : **Moussa H.**
 
 Ce projet de Data Analysis, développé intégralement sur **Databricks**, propose un pipeline complet d'ingestion, de traitement et de visualisation des données pour le **nouveau format de la Ligue des Champions** (Phase de Ligue unique à 36 équipes).
 
