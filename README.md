@@ -1,52 +1,60 @@
-# 🇪🇺 Analyse et Simulation de la UEFA Champions League 2026/2027
+# 🇪🇺 UEFA Champions League 2026/2027 Analysis & Simulation
 
-### 👨‍💻 Développé par : **Moussa H.**
-
-Ce projet de Data Analysis, développé intégralement sur **Databricks**, propose un pipeline complet d'ingestion, de traitement et de visualisation des données pour le **nouveau format de la Ligue des Champions** (Phase de Ligue unique à 36 équipes).
-
----
-
-## 🚀 Objectifs du Projet
-* **Ingérer et centraliser** les résultats de matchs au format de données distribuées.
-* **Calculer dynamiquement le classement** global selon les critères stcrits de l'UEFA (Points, Différence de buts, Meilleure attaque).
-* **Segmenter automatiquement les équipes** selon leur destin dans la compétition (Top 8 Qualifiés, Barragistes, Éliminés).
-* **Visualiser la hiérarchie** des clubs via des tableaux de bord interactifs.
+### 👨‍💻 AUTHOR / AUTEUR
+**Moussa H. (@hmaroum-dotcom)**
 
 ---
 
-## 🛠️ Stack Technique
-* **Plateforme :** Databricks (Espace de travail collaboratif, Lakehouse architecture)
-* **Moteur de calcul :** PySpark / Apache Spark (DataFrames API, Fonctions de fenêtrage avancées)
-* **Gestion de versions :** Intégration Git native avec l'application GitHub Databricks
-* **Visualisation :** Databricks Native Visualizations (Graphiques en barres dynamiques avec groupements logiques)
+### 🎯 PROJECT OVERVIEW / PRÉSENTATION DU PROJET
+* **EN:** This Data Analysis project, built entirely on **Databricks**, delivers an end-to-end data pipeline for ingestion, processing, and visualization tailored to the **new UEFA Champions League single-league format** (36-team single table).
+* **FR:** Ce projet d'analyse de données, entièrement développé sur **Databricks**, propose un pipeline complet d'ingestion, de traitement et de visualisation adapté au **nouveau format de la Ligue des Champions** (Phase de Ligue unique à 36 équipes).
 
 ---
 
-## 📂 Structure du Pipeline (Notebook)
-
-Le projet s'articule autour de 3 étapes clés au sein du même pipeline de données :
-
-1. **Ingestion & Data Cleansing :** Chargement des scores bruts, calcul des résultats (Victoire/Nul/Défaite) et attribution des points (3, 1, 0) distinctement pour les équipes à domicile et à l'extérieur.
-2. **Agrégation du Classement :** Utilisation des fonctions Spark `union` et `groupBy` pour consolider les performances globales des 36 clubs européens.
-3. **Analyse de Performance (Window Functions) :** Application de `Window.partitionBy().orderBy()` pour privilégier l'exécution optimisée du cluster, suivi d'un enrichissement de données (`uefa_status`) pour cartographier la qualification.
+### 💡 CORE OBJECTIVES / OBJECTIFS CLÉS
+* **EN:** Ingest, centralize, and dynamically compute global standings according to strict UEFA tie-breaking rules (Points, Goal Difference, Goals Scored).
+* **EN:** Automatically segment teams based on tournament outcomes (Top 8, Play-offs, Eliminated) and analyze club offensive efficiency.
+* **FR:** Ingérer, centraliser et calculer dynamiquement le classement global selon les critères stricts de l'UEFA (Points, Différence de buts, Buts marqués).
+* **FR:** Segmenter automatiquement les équipes selon leur destin (Top 8, Barrages, Éliminés) et analyser l'efficacité offensive des clubs.
 
 ---
 
-## 📊 Aperçu des Résultats Visuels
-
-L'analyse permet de générer des graphiques en barres épurés où :
-* Les clubs sont triés de manière rigoureuse selon les règles de l'UEFA.
-* Les barres disposent d'un codage couleur selon leur statut (`🟢 Qualifié`, `🟡 Barragiste`, `🔴 Éliminé`).
-* Le volume de buts et de points est directement inspectable via des étiquettes de données intégrées.
-
----
-
-## ⚙️ Comment exécuter ce projet ?
-1. Clonez ce dépôt dans votre espace de travail Databricks via les **Git Folders**.
-2. Créez ou connectez un cluster d'exécution (compatible avec l'offre gratuite Databricks Community Edition).
-3. Ouvrez le notebook et cliquez sur **Run All** (Tout exécuter).
+### 💻 TECHNOLOGIES USED / TECHNOLOGIES UTILISÉES
+* **Platform / Plateforme :** Databricks (Collaborative Workspace, Lakehouse Architecture)
+* **Compute Engine / Moteur :** PySpark / Apache Spark (DataFrames API, Advanced Window Functions)
+* **Version Control / Gestion de versions :** Native Git Integration (Databricks GitHub App)
+* **Visualization / Visualisation :** Databricks Native Visualizations (Color-coded dashboards)
 
 ---
 
-## 📬 Contact
-* **GitHub :** [@hmaroum-dotcom](https://github.com)
+### ⚙️ DATA PIPELINE DESIGN / ARCHITECTURE DU PIPELINE
+
+1. **Ingestion & Data Cleansing (EN/FR):** 
+   * *EN:* Loading raw scores and allocating points (3, 1, 0) accurately for both home and away fixtures.
+   * *FR:* Chargement des scores bruts et attribution des points (3, 1, 0) pour les matchs à domicile et à l'extérieur.
+2. **Standings Aggregation (EN/FR):** 
+   * *EN:* Leveraging Spark's `union` and `groupBy` operators to compile consolidated stats for all 36 clubs.
+   * *FR:* Utilisation des fonctions Spark `union` et `groupBy` pour consolider les statistiques des 36 clubs.
+3. **Advanced Analytics (EN/FR):** 
+   * *EN:* Implementing cluster-optimized `Window` functions to generate precise league rankings and map qualification tiers (`UEFA_Status`).
+   * *FR:* Application de fonctions de fenêtrage (`Window`) optimisées pour générer le rang officiel et cartographier le statut de qualification.
+4. **Efficiency Metrics (EN/FR):** 
+   * *EN:* Computing goals-per-match ratios (`Offensive_Efficiency`) rounded to two decimals to isolate clinical teams.
+   * *FR:* Calcul du ratio de buts par match (`Efficacité_Offensive`) arrondi à deux décimales pour identifier les attaques les plus réalistes.
+
+---
+
+### 📊 METRICS & VISUALIZATIONS / INDICATEURS & VISUALISATIONS
+* **EN:** Interactive bar charts with specific status group coloring (`🟢 Qualified`, `🟡 Knockout Play-offs`, `🔴 Eliminated`) and integrated data value labels for clean metric scanning.
+* **FR:** Graphiques en barres interactifs avec un codage couleur par statut (`🟢 Qualifié`, `🟡 Barragiste`, `🔴 Éliminé`) et étiquettes de données intégrées pour une lecture immédiate des indicateurs.
+
+---
+
+### 🚀 RUNNING THE CODE / EXÉCUTION DU PROJET
+1. **EN:** Clone this repository into your Databricks workspace using **Git Folders**. Attach a cluster (fully compatible with Databricks Community Edition) and click **Run All**.
+2. **FR:** Clonez ce dépôt dans votre espace Databricks via les **Git Folders**. Connectez un cluster (compatible avec l'édition gratuite Community) et cliquez sur **Tout exécuter**.
+
+---
+
+### 📬 GET IN TOUCH / CONTACT
+* **GitHub:** [@hmaroum-dotcom](https://github.com)
