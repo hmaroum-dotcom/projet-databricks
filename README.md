@@ -1,60 +1,65 @@
-# 🇪🇺 UEFA Champions League 2026/2027 Analysis & Simulation
+# 🏆 Databricks Pipeline : Analyse de Performance 360° (UEFA Champions League)
 
-### 👨‍💻 AUTHOR / AUTEUR
-**Moussa H. (@hmaroum-dotcom)**
+[![Databricks](https://shields.io)](https://databricks.com)
+[![Apache Spark](https://shields.io)](https://apache.org)
+[![Delta Lake](https://shields.io)](https://delta.io)
+[![Python](https://shields.io)](https://python.org)
 
----
+## 📝 Présentation du Projet
+Ce projet consiste en la conception et le déploiement d'un **pipeline de données End-to-End** sur l'architecture Cloud **Databricks**, analysant les performances de la phase de ligue de la Ligue des Champions (UEFA). 
 
-### 🎯 PROJECT OVERVIEW / PRÉSENTATION DU PROJET
-* **EN:** This Data Analysis project, built entirely on **Databricks**, delivers an end-to-end data pipeline for ingestion, processing, and visualization tailored to the **new UEFA Champions League single-league format** (36-team single table).
-* **FR:** Ce projet d'analyse de données, entièrement développé sur **Databricks**, propose un pipeline complet d'ingestion, de traitement et de visualisation adapté au **nouveau format de la Ligue des Champions** (Phase de Ligue unique à 36 équipes).
-
----
-
-### 💡 CORE OBJECTIVES / OBJECTIFS CLÉS
-* **EN:** Ingest, centralize, and dynamically compute global standings according to strict UEFA tie-breaking rules (Points, Goal Difference, Goals Scored).
-* **EN:** Automatically segment teams based on tournament outcomes (Top 8, Play-offs, Eliminated) and analyze club offensive efficiency.
-* **FR:** Ingérer, centraliser et calculer dynamiquement le classement global selon les critères stricts de l'UEFA (Points, Différence de buts, Buts marqués).
-* **FR:** Segmenter automatiquement les équipes selon leur destin (Top 8, Barrages, Éliminés) et analyser l'efficacité offensive des clubs.
+L'objectif est d'extraire des données de matchs brutes, d'appliquer des règles de nettoyage rigoureuses (*Data Quality*), de calculer des indicateurs de performance clés (KPIs) complexes et de générer une cartographie analytique prête pour des présentations exécutives ou des outils de Business Intelligence (Power BI / Tableau).
 
 ---
 
-### 💻 TECHNOLOGIES USED / TECHNOLOGIES UTILISÉES
-* **Platform / Plateforme :** Databricks (Collaborative Workspace, Lakehouse Architecture)
-* **Compute Engine / Moteur :** PySpark / Apache Spark (DataFrames API, Advanced Window Functions)
-* **Version Control / Gestion de versions :** Native Git Integration (Databricks GitHub App)
-* **Visualization / Visualisation :** Databricks Native Visualizations (Color-coded dashboards)
+## 📐 Architecture Technique
+
+Le projet respecte l'**Architecture Medallion (Bronze ➜ Silver ➜ Gold)**, standard de l'industrie pour garantir la traçabilité et la qualité de la donnée au sein d'un **Data Lakehouse** :
+
+```text
+[Données Brutes] ➜  🟫 COUCHE BRONZE : Ingestion & Stockage brut
+                 ➜  ⬜ COUCHE SILVER : Nettoyage (F.trim), Harmonisation & Règles métiers
+                 ➜  🟨 COUCHE GOLD   : Agrégation, Feature Engineering (Ratios) & Classement
+                 ➜  💾 STOCKAGE      : Table Delta Lake (Unity Catalog Compliant)
+                 ➜  📊 COMPORTEMENT  : Visualisation de production (Seaborn PNG local embedded)
+```
+
+### ⚙️ Choix d'ingénierie et Optimisations (Production-Ready)
+* **Compatibilité Databricks Serverless (Spark Connect) :** L'usage classique des fenêtres globales distribuées (`Window.orderBy`) sur des clusters Serverless déclenche de lourdes alertes d'exécution et dégrade la mémoire. Ce pipeline résout cette contrainte en utilisant l'API **`mapInPandas`** pour déléguer l'indexation du classement de manière fluide et parallélisée.
+* **Zéro Dépendance RDD :** Le code exclut totalement les RDDs bas niveau (interdits sur les architectures Serverless modernes), s'assurant ainsi d'être exécutable sur n'importe quel espace de travail Cloud récent.
+* **Gouvernance de Données (Unity Catalog) :** L'écriture finale est configurée pour utiliser les catalogues dynamiques de sessions, évitant l'ancien méta-store Hive obsolète (`hive_metastore`).
+* **Intégration Continue GitHub :** La couche visuelle est développée avec **Seaborn/Matplotlib** et nettoyée des glyphes/emojis complexes. Le rendu graphique s'inscrit nativement au format PNG au cœur du Notebook `.ipynb`, garantissant un affichage instantané et parfait lors de la navigation sur GitHub.
 
 ---
 
-### ⚙️ DATA PIPELINE DESIGN / ARCHITECTURE DU PIPELINE
+## 📊 Indicateurs Analytiques Calculés (Couche Gold)
 
-1. **Ingestion & Data Cleansing (EN/FR):** 
-   * *EN:* Loading raw scores and allocating points (3, 1, 0) accurately for both home and away fixtures.
-   * *FR:* Chargement des scores bruts et attribution des points (3, 1, 0) pour les matchs à domicile et à l'extérieur.
-2. **Standings Aggregation (EN/FR):** 
-   * *EN:* Leveraging Spark's `union` and `groupBy` operators to compile consolidated stats for all 36 clubs.
-   * *FR:* Utilisation des fonctions Spark `union` et `groupBy` pour consolider les statistiques des 36 clubs.
-3. **Advanced Analytics (EN/FR):** 
-   * *EN:* Implementing cluster-optimized `Window` functions to generate precise league rankings and map qualification tiers (`UEFA_Status`).
-   * *FR:* Application de fonctions de fenêtrage (`Window`) optimisées pour générer le rang officiel et cartographier le statut de qualification.
-4. **Efficiency Metrics (EN/FR):** 
-   * *EN:* Computing goals-per-match ratios (`Offensive_Efficiency`) rounded to two decimals to isolate clinical teams.
-   * *FR:* Calcul du ratio de buts par match (`Efficacité_Offensive`) arrondi à deux décimales pour identifier les attaques les plus réalistes.
+Le modèle de données final expose un audit de performance complet à travers les métriques suivantes :
+* **Win_Rate_% :** Taux de victoire réel calculé selon le prorata des matchs joués.
+* **Goals_Scored_Avg :** Efficacité offensive (Moyenne de buts marqués par match).
+* **Goals_Conceded_Avg :** Solidité/Fragilité défensive (Moyenne de buts encaissés par match).
+* **Goal_Diff :** Différence de buts brute, alignée sur les critères officiels de bris d'égalité de l'UEFA.
+* **Status :** Segmentation automatique et dynamique des équipes (*Top 8 Direct, Playoffs, Eliminated*).
 
 ---
 
-### 📊 METRICS & VISUALIZATIONS / INDICATEURS & VISUALISATIONS
-* **EN:** Interactive bar charts with specific status group coloring (`🟢 Qualified`, `🟡 Knockout Play-offs`, `🔴 Eliminated`) and integrated data value labels for clean metric scanning.
-* **FR:** Graphiques en barres interactifs avec un codage couleur par statut (`🟢 Qualifié`, `🟡 Barragiste`, `🔴 Éliminé`) et étiquettes de données intégrées pour une lecture immédiate des indicateurs.
+## 🛠️ Instructions d'Installation et Déploiement
+
+### Prérequis
+* Un espace de travail **Databricks** (Community ou Enterprise).
+* Un cluster configuré avec **Runtime 15.4 LTS ou supérieur** (Python 3.12+).
+
+### Déploiement du Pipeline
+1. Clonez ce dépôt ou téléchargez le fichier `Notebook.ipynb`.
+2. Importez le fichier au sein de votre espace de travail Databricks Workspace.
+3. Attachez le notebook à votre cluster de calcul (Serverless ou Dédié).
+4. Cliquez sur **Run All** (Exécuter tout).
+
+Le script gère automatiquement l'installation de la bibliothèque graphique requise (`%pip install seaborn --quiet`) de manière isolée pour votre session.
 
 ---
 
-### 🚀 RUNNING THE CODE / EXÉCUTION DU PROJET
-1. **EN:** Clone this repository into your Databricks workspace using **Git Folders**. Attach a cluster (fully compatible with Databricks Community Edition) and click **Run All**.
-2. **FR:** Clonez ce dépôt dans votre espace Databricks via les **Git Folders**. Connectez un cluster (compatible avec l'édition gratuite Community) et cliquez sur **Tout exécuter**.
-
----
-
-### 📬 GET IN TOUCH / CONTACT
-* **GitHub:** [@hmaroum-dotcom](https://github.com)
+## 🚀 Impact Métier / Restitution
+À la fin de l'exécution, le pipeline écrit de manière permanente les résultats au format **Delta Lake** sous le nom de table `ucl_analytics_dashboard`. Cette table présente un jeu de données parfaitement consolidé à **36 lignes uniques**, prêt pour :
+1. Être requêté directement par les analystes métiers via des cellules **Spark SQL**.
+2. Alimenter un tableau de bord exécutif automatisé sur **Power BI** ou **Tableau Software** via le connecteur natif Databricks.
