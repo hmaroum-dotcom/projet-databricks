@@ -121,22 +121,24 @@ Cette visualisation compare le nombre moyen de buts encaissés par match. Une va
 
 ![Analyse défensive des équipes](images/champions_league_defense.png)
 
-> **Note :** les images doivent être générées par le notebook et enregistrées dans le dossier `images/` du dépôt. Si elles ne sont pas encore publiées, les aperçus ne s'afficheront pas sur GitHub.
 
 ## 📁 Structure du dépôt
 
 ```text
-champions-league-analytics/
-│
+## 📁 Structure du dépôt
+
+```text
+projet-databricks/
 ├── README.md
-├── notebooks/
-│   └── champions_league_analytics.ipynb
-│
-├── images/
-│   ├── champions_league_ranking.png
-│   └── champions_league_defense.png
-│
-└── .gitignore
+├── Ligue des Champions UEFA 2026_2027.ipynb
+└── images/
+    ├── champions_league_ranking.png
+    └── champions_league_defense.png
+```
+
+- `README.md` : présentation du projet, de son architecture et des résultats.
+- `Ligue des Champions UEFA 2026_2027.ipynb` : notebook Databricks contenant les transformations PySpark, les analyses et la génération des graphiques.
+- `images/` : graphiques statiques PNG intégrés à la documentation GitHub.
 ```
 
 - `README.md` : présentation, architecture et résultats du projet.
