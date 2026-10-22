@@ -1,65 +1,198 @@
-# 🏆 Databricks Pipeline : Analyse de Performance 360° (UEFA Champions League)
+# 🏆 Champions League Analytics — Databricks & PySpark
 
-[![Databricks](https://shields.io)](https://databricks.com)
-[![Apache Spark](https://shields.io)](https://apache.org)
-[![Delta Lake](https://shields.io)](https://delta.io)
-[![Python](https://shields.io)](https://python.org)
+[![Databricks](https://img.shields.io/badge/Platform-Databricks-EF3E42?logo=databricks&logoColor=white)](https://www.databricks.com/)
+[![Apache Spark](https://img.shields.io/badge/Engine-Apache%20Spark-E25A1C?logo=apachespark&logoColor=white)](https://spark.apache.org/)
+[![Python](https://img.shields.io/badge/Language-Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Pandas](https://img.shields.io/badge/Analysis-Pandas-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Matplotlib](https://img.shields.io/badge/Visualization-Matplotlib-11557C)](https://matplotlib.org/)
+[![GitHub](https://img.shields.io/badge/Repository-GitHub-181717?logo=github&logoColor=white)](https://github.com/)
 
-## 📝 Présentation du Projet
-Ce projet consiste en la conception et le déploiement d'un **pipeline de données End-to-End** sur l'architecture Cloud **Databricks**, analysant les performances de la phase de ligue de la Ligue des Champions (UEFA). 
+## 📝 Présentation du projet
 
-L'objectif est d'extraire des données de matchs brutes, d'appliquer des règles de nettoyage rigoureuses (*Data Quality*), de calculer des indicateurs de performance clés (KPIs) complexes et de générer une cartographie analytique prête pour des présentations exécutives ou des outils de Business Intelligence (Power BI / Tableau).
+**Champions League Analytics** est un projet pédagogique de Data Analytics développé avec **Databricks, Apache Spark et PySpark**. Il vise à analyser les performances d'équipes de football à partir d'un jeu de données simulé de 24 matchs de la Ligue des champions de l'UEFA.
 
----
+L'objectif est de mettre en pratique les principales étapes d'un projet analytique : préparation des données, calcul des indicateurs métier, agrégation des résultats, classement des équipes et création de visualisations statiques adaptées à une publication sur GitHub.
 
-## 📐 Architecture Technique
+Le projet illustre une démarche de transformation des données brutes en informations exploitables pour l'analyse et la prise de décision.
 
-Le projet respecte l'**Architecture Medallion (Bronze ➜ Silver ➜ Gold)**, standard de l'industrie pour garantir la traçabilité et la qualité de la donnée au sein d'un **Data Lakehouse** :
+> **Périmètre :** les données sont simulées à des fins d'apprentissage. Les résultats ne constituent pas un classement officiel de l'UEFA.
+
+## 🎯 Objectifs analytiques
+
+- Préparer et structurer les données de matchs avec PySpark.
+- Calculer les points attribués aux équipes à domicile et à l'extérieur.
+- Consolider les performances individuelles des équipes.
+- Construire un classement selon les points, la différence de buts et les buts marqués.
+- Analyser l'efficacité offensive et la performance défensive.
+- Attribuer un statut pédagogique selon la position au classement.
+- Générer des graphiques statiques au format PNG pour GitHub.
+- Préparer une base analytique réutilisable dans un environnement de Business Intelligence.
+
+## 🏗️ Architecture du projet
+
+Le notebook est organisé en étapes successives de préparation, transformation, agrégation et restitution.
 
 ```text
-[Données Brutes] ➜  🟫 COUCHE BRONZE : Ingestion & Stockage brut
-                 ➜  ⬜ COUCHE SILVER : Nettoyage (F.trim), Harmonisation & Règles métiers
-                 ➜  🟨 COUCHE GOLD   : Agrégation, Feature Engineering (Ratios) & Classement
-                 ➜  💾 STOCKAGE      : Table Delta Lake (Unity Catalog Compliant)
-                 ➜  📊 COMPORTEMENT  : Visualisation de production (Seaborn PNG local embedded)
+┌─────────────────────────────────────────────┐
+│             SOURCE DE DONNÉES               │
+│         24 matchs simulés en Python          │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────┐
+│           PRÉPARATION — PySpark             │
+│   Schéma explicite et calcul des points     │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────┐
+│          TRANSFORMATION — PySpark           │
+│  Fusion domicile / extérieur et agrégation  │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────┐
+│          ANALYSE — INDICATEURS              │
+│ Classement, différence de buts et défense   │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────┐
+│         VISUALISATION — Matplotlib           │
+│       Export de graphiques statiques PNG    │
+└──────────────────────┬──────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────┐
+│                RESTITUTION                  │
+│         Notebook Databricks et GitHub       │
+└─────────────────────────────────────────────┘
 ```
 
-### ⚙️ Choix d'ingénierie et Optimisations (Production-Ready)
-* **Compatibilité Databricks Serverless (Spark Connect) :** L'usage classique des fenêtres globales distribuées (`Window.orderBy`) sur des clusters Serverless déclenche de lourdes alertes d'exécution et dégrade la mémoire. Ce pipeline résout cette contrainte en utilisant l'API **`mapInPandas`** pour déléguer l'indexation du classement de manière fluide et parallélisée.
-* **Zéro Dépendance RDD :** Le code exclut totalement les RDDs bas niveau (interdits sur les architectures Serverless modernes), s'assurant ainsi d'être exécutable sur n'importe quel espace de travail Cloud récent.
-* **Gouvernance de Données (Unity Catalog) :** L'écriture finale est configurée pour utiliser les catalogues dynamiques de sessions, évitant l'ancien méta-store Hive obsolète (`hive_metastore`).
-* **Intégration Continue GitHub :** La couche visuelle est développée avec **Seaborn/Matplotlib** et nettoyée des glyphes/emojis complexes. Le rendu graphique s'inscrit nativement au format PNG au cœur du Notebook `.ipynb`, garantissant un affichage instantané et parfait lors de la navigation sur GitHub.
+Cette organisation reprend les principes de séparation des responsabilités utilisés dans les projets Data. Une évolution vers une architecture Medallion Bronze / Silver / Gold est envisageable lorsque le projet intégrera des données persistées et des traitements distincts par couche.
 
----
+## 🛠️ Technologies utilisées
 
-## 📊 Indicateurs Analytiques Calculés (Couche Gold)
+| Technologie | Utilisation |
+|---|---|
+| Databricks | Environnement de développement et d'exécution |
+| Apache Spark / PySpark | Transformation et agrégation distribuées |
+| Python | Préparation des données et logique analytique |
+| Pandas | Conversion des résultats agrégés pour les graphiques |
+| Matplotlib | Création et export des visualisations PNG |
+| Git / GitHub | Versionnement, documentation et partage du projet |
 
-Le modèle de données final expose un audit de performance complet à travers les métriques suivantes :
-* **Win_Rate_% :** Taux de victoire réel calculé selon le prorata des matchs joués.
-* **Goals_Scored_Avg :** Efficacité offensive (Moyenne de buts marqués par match).
-* **Goals_Conceded_Avg :** Solidité/Fragilité défensive (Moyenne de buts encaissés par match).
-* **Goal_Diff :** Différence de buts brute, alignée sur les critères officiels de bris d'égalité de l'UEFA.
-* **Status :** Segmentation automatique et dynamique des équipes (*Top 8 Direct, Playoffs, Eliminated*).
+## 📊 Indicateurs analytiques
 
----
+Le classement agrégé expose les principaux indicateurs suivants :
 
-## 🛠️ Instructions d'Installation et Déploiement
+| Indicateur | Description |
+|---|---|
+| `matches_played` | Nombre de matchs disputés par équipe dans le jeu simulé |
+| `total_points` | Total des points obtenus : 3 pour une victoire, 1 pour un nul et 0 pour une défaite |
+| `total_scored` | Nombre total de buts marqués |
+| `total_conceded` | Nombre total de buts encaissés |
+| `goal_difference` | Différence entre les buts marqués et les buts encaissés |
+| `goals_conceded_per_match` | Moyenne de buts encaissés par match |
+| `rank` | Position calculée dans le classement pédagogique |
+| `uefa_status` | Catégorie pédagogique déterminée à partir du rang |
+
+### 🏅 Catégories du classement
+
+- 🟢 **Qualifié direct :** rangs 1 à 8.
+- 🟡 **Barragiste :** rangs 9 à 24.
+- 🔴 **Éliminé :** rangs 25 et suivants.
+
+Ces catégories reprennent les seuils du format de la phase de ligue de l'UEFA Champions League. Toutefois, le classement du projet utilise des critères de départage simplifiés et des données incomplètes : il ne doit pas être interprété comme un classement officiel.
+
+## 📈 Visualisations
+
+Les graphiques sont produits avec Matplotlib et enregistrés en images PNG afin de permettre leur consultation directe sur GitHub.
+
+### 1. Classement par points
+
+Cette visualisation compare le total des points obtenus par chaque équipe et facilite l'identification des meilleures performances dans le jeu simulé.
+
+![Classement des équipes par points](images/champions_league_ranking.png)
+
+### 2. Analyse défensive
+
+Cette visualisation compare le nombre moyen de buts encaissés par match. Une valeur plus faible correspond à une meilleure performance défensive sur les matchs disponibles.
+
+![Analyse défensive des équipes](images/champions_league_defense.png)
+
+> **Note :** les images doivent être générées par le notebook et enregistrées dans le dossier `images/` du dépôt. Si elles ne sont pas encore publiées, les aperçus ne s'afficheront pas sur GitHub.
+
+## 📁 Structure du dépôt
+
+```text
+champions-league-analytics/
+│
+├── README.md
+├── notebooks/
+│   └── champions_league_analytics.ipynb
+│
+├── images/
+│   ├── champions_league_ranking.png
+│   └── champions_league_defense.png
+│
+└── .gitignore
+```
+
+- `README.md` : présentation, architecture et résultats du projet.
+- `notebooks/` : notebook Databricks exporté au format Jupyter `.ipynb`.
+- `images/` : graphiques statiques utilisés dans la documentation.
+- `.gitignore` : exclusion des fichiers temporaires ou locaux non nécessaires au dépôt.
+
+## 🚀 Installation et exécution
 
 ### Prérequis
-* Un espace de travail **Databricks** (Community ou Enterprise).
-* Un cluster configuré avec **Runtime 15.4 LTS ou supérieur** (Python 3.12+).
 
-### Déploiement du Pipeline
-1. Clonez ce dépôt ou téléchargez le fichier `Notebook.ipynb`.
-2. Importez le fichier au sein de votre espace de travail Databricks Workspace.
-3. Attachez le notebook à votre cluster de calcul (Serverless ou Dédié).
-4. Cliquez sur **Run All** (Exécuter tout).
+- Un espace de travail Databricks avec un environnement Python et PySpark compatible.
+- Un notebook Databricks ou Jupyter prenant en charge PySpark.
+- Matplotlib pour générer les graphiques.
+- Git et un compte GitHub pour publier le projet.
 
-Le script gère automatiquement l'installation de la bibliothèque graphique requise (`%pip install seaborn --quiet`) de manière isolée pour votre session.
+### Étapes d'exécution
 
----
+1. Cloner le dépôt GitHub ou télécharger le notebook.
+2. Importer le notebook dans Databricks.
+3. Attacher le notebook à un environnement de calcul compatible.
+4. Exécuter les cellules dans l'ordre, ou utiliser la cellule autonome prévue pour reconstruire les données et calculer le classement.
+5. Vérifier les résultats des agrégations et des indicateurs.
+6. Générer les graphiques PNG.
+7. Récupérer les images dans le dépôt GitHub, puis les versionner avec le notebook et le README.
 
-## 🚀 Impact Métier / Restitution
-À la fin de l'exécution, le pipeline écrit de manière permanente les résultats au format **Delta Lake** sous le nom de table `ucl_analytics_dashboard`. Cette table présente un jeu de données parfaitement consolidé à **36 lignes uniques**, prêt pour :
-1. Être requêté directement par les analystes métiers via des cellules **Spark SQL**.
-2. Alimenter un tableau de bord exécutif automatisé sur **Power BI** ou **Tableau Software** via le connecteur natif Databricks.
+### Dépendances Python
+
+Si Matplotlib n'est pas disponible dans l'environnement :
+
+```python
+%pip install matplotlib
+```
+
+Aucune installation de Seaborn n'est nécessaire pour la version actuelle du projet.
+
+## 🔍 Contrôles qualité et pistes d'amélioration
+
+Les prochaines évolutions pourront inclure :
+
+- Validation des identifiants de matchs et détection des doublons.
+- Contrôle des scores négatifs et des valeurs manquantes.
+- Vérification de la cohérence des équipes et des résultats.
+- Ajout du taux de victoire et de la moyenne de buts marqués.
+- Comparaison des performances à domicile et à l'extérieur.
+- Tests automatisés des règles de calcul des points.
+- Persistance des résultats dans des tables Delta Lake.
+- Mise en place progressive des couches Bronze, Silver et Gold.
+- Connexion à Power BI ou Tableau pour une restitution décisionnelle.
+
+## 💼 Valeur métier
+
+Ce projet démontre la mise en œuvre d'un flux analytique allant de la préparation des données à leur restitution visuelle.
+
+Il permet de valoriser des compétences en :
+
+- **Data Analytics :** construction d'indicateurs et interprétation des performances.
+- **Data Engineering :** transformation et agrégation de données avec PySpark.
+- **Data Quality :** validation de la cohérence des résultats
